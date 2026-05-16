@@ -53,7 +53,7 @@ const handleGenerate = async () => {
 
 
   return (
-    <div className='relative flex flex-col items-center justify-between px-4 md:px-16 lg:px-24 xl:px-32 2xl:px-48 min-h-screen'>
+    <div className='relative flex flex-col items-center justify-between px-4 md:px-16 lg:px-24 xl:px-32 2xl:px-48 min-h-screen pt-28'>
     {/* BACKGROUND BLUR THEME */}
     <div className='absolute top-30 -z-10 left-1/4 size-72 bg-pink-600 blur-[300px]'></div>
    
