@@ -34,7 +34,7 @@ const LoginPage = () => {
           <div className='space-y-2'>
             <div className='flex items-center justify-between ml-1'>
               <label className='text-sm font-medium text-zinc-300'>Password</label>
-              <Link href='/forgotPassword' size='sm' className='text-xs text-pink-500 hover:text-pink-400 font-medium transition-colors'>
+              <Link href='/forgotPassword' className='text-xs text-pink-500 hover:text-pink-400 font-medium transition-colors'>
                 Forgot Password?
               </Link>
             </div>

@@ -13,9 +13,11 @@ export type ThumbnailStyle =
 
 
 export const colorSchemes = [
-  { id: 'default', name: 'Default', colors: ['#1a1a1a', '#ff1493', '#ffffff'] },
-  { id: 'dark', name: 'Dark', colors: ['#0f0f0f', '#1a1a1a', '#333333'] },
-  { id: 'light', name: 'Light', colors: ['#ffffff', '#f0f0f0', '#e0e0e0'] },
+  { id: 'Default', name: 'Default', colors: ['#1a1a1a', '#ff1493', '#ffffff'] },
+  { id: 'Dark', name: 'Dark', colors: ['#0f0f0f', '#1a1a1a', '#333333'] },
+  { id: 'Light', name: 'Light', colors: ['#ffffff', '#f0f0f0', '#e0e0e0'] },
+  { id: 'Neon', name: 'Neon', colors: ['#0d0d0d', '#00ffcc', '#ff00ff'] },
+  { id: 'Sunset', name: 'Sunset', colors: ['#ff6b35', '#f7c59f', '#ffe0c2'] },
 ];
 
 
@@ -50,4 +52,3 @@ export interface IThumbnail {
   color_scheme: string;
   created_at: string;
 }
-

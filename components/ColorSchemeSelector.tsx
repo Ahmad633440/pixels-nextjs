@@ -1,24 +1,24 @@
 import { colorSchemes } from '@/assets/data';
 import React from 'react'
 
-const ColorSchemeSelector = ({value, onChange} : {value: string; onChange: (schemeId: string)=>void}) => {
+const ColorSchemeSelector = ({ value, onChange }: { value: string; onChange: (schemeId: string) => void }) => {
   return (
     <div className='space-y-3 '>
-    <label className='block text-sm font-medium text-zinc-200'>Color Scheme</label>
+      <label className='block text-sm font-medium text-zinc-200'>Color Scheme</label>
 
-    <div className='grid grid-cols-6 gap-3'>
-     {colorSchemes.map((scheme)=>(
-        <button key={scheme.id} onClick={()=>onChange(scheme.id)}
-        className={`relative rounded-lg transition-all ${value === scheme.id && 'ring-2 ring-pink-500'}`} title={scheme.name}>
-          <div className='flex h-10 rounded-lg overflow-hidden'>
-        {scheme.colors.map((color: string, i: number)=>(
-            <div className='flex-1' style={{backgroundColor: color}} key={i}/>
+      <div className='grid grid-cols-6 gap-3'>
+        {colorSchemes.map((scheme) => (
+          <button key={scheme.id} onClick={() => onChange(scheme.id)}
+            className={`relative rounded-lg transition-all ${value === scheme.id && 'ring-2 ring-pink-500'}`} title={scheme.name}>
+            <div className='flex h-10 rounded-lg overflow-hidden'>
+              {scheme.colors.map((color: string, i: number) => (
+                <div className='flex-1' style={{ backgroundColor: color }} key={i} />
+              ))}
+            </div>
+          </button>
         ))}
-          </div>
-        </button>
-     ))}
-    </div>
-     <p className='text-xs text-zinc-400'>Selected: {colorSchemes.find((s)=> s.id === value)?.name}</p>
+      </div>
+      <p className='text-xs text-zinc-400'>Selected: {colorSchemes.find((s) => s.id === value)?.name}</p>
     </div>
   )
 }

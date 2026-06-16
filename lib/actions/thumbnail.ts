@@ -22,10 +22,12 @@ const stylePrompts = {
     'Illustrated' : 'illustrated thumbnail, custom digital illustration, stylized characters, bold outlines, vibrant colors, creative cartoon or vector art style',
 }
 
-const ColorSchemeDescription = {
+const ColorSchemeDescription: Record<string, string> = {
     'Default' : 'vibrant and energetic colors, high saturation, bold contrasts, eye-catching palette',
-    'Light' : 'neon glow effects, electric blues and pinks, cyberpunk lightening, high contrast glow ',
-    'Dark' : 'black and white color scheme, high contrast, dramatic lightening, timeless aesthetic',
+    'Dark'    : 'black and white color scheme, high contrast, dramatic lighting, timeless aesthetic',
+    'Light'   : 'soft pastel tones, bright and airy, clean whites and warm neutrals, inviting and fresh',
+    'Neon'    : 'electric neon glow effects, cyberpunk neon blues and magentas, dark background with vivid neon accents, high contrast glow',
+    'Sunset'  : 'warm sunset gradient palette, rich oranges, coral pinks and golden yellows, warm and energetic atmosphere',
 }
 
 export async function generateThumbnailAction(data: ThumbnailRequestBody) {
@@ -66,7 +68,6 @@ export async function generateThumbnailAction(data: ThumbnailRequestBody) {
                 {category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT, threshold: HarmBlockThreshold.OFF},
                 {category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT, threshold: HarmBlockThreshold.OFF},
                 {category: HarmCategory.HARM_CATEGORY_HARASSMENT, threshold: HarmBlockThreshold.OFF},
-                {category: HarmCategory.HARM_CATEGORY_IMAGE_SEXUALLY_EXPLICIT, threshold: HarmBlockThreshold.OFF},
             ]
         }
 
@@ -204,7 +205,6 @@ export async function recreateThumbnailAction(data: {
                 {category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT, threshold: HarmBlockThreshold.OFF},
                 {category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT, threshold: HarmBlockThreshold.OFF},
                 {category: HarmCategory.HARM_CATEGORY_HARASSMENT, threshold: HarmBlockThreshold.OFF},
-                {category: HarmCategory.HARM_CATEGORY_IMAGE_SEXUALLY_EXPLICIT, threshold: HarmBlockThreshold.OFF},
             ]
         };
 

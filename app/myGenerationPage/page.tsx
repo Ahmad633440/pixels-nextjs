@@ -80,12 +80,18 @@ const page = () => {
        <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6'>
          {thumbnails.map((thumbnail) => (
            <div key={thumbnail.id} className='group relative rounded-2xl bg-white/8 border border-white/12 overflow-hidden hover:border-white/20 transition-colors'>
-             <div className='aspect-video relative'>
-               <img
-                 src={thumbnail.image_url}
-                 alt={thumbnail.title}
-                 className='w-full h-full object-cover'
-               />
+             <div className='aspect-video relative bg-black/20'>
+               {thumbnail.image_url ? (
+                 <img
+                   src={thumbnail.image_url}
+                   alt={thumbnail.title}
+                   className='w-full h-full object-cover'
+                 />
+               ) : (
+                 <div className='w-full h-full flex items-center justify-center text-zinc-500'>
+                   <span className='text-sm'>Image unavailable</span>
+                 </div>
+               )}
                <div className='absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100'>
                  <div className='flex gap-2'>
                    <button

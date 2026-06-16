@@ -45,7 +45,7 @@ const ThumbnailSchema = new mongoose.Schema<IThumbnail>({
   },
   color_scheme: {
     type: String,
-    enum: ['Default','Dark','Light'],
+    enum: ['Default','Dark','Light','Neon','Sunset'],
   },
   text_overlay: {
     type: Boolean,
@@ -65,6 +65,12 @@ const ThumbnailSchema = new mongoose.Schema<IThumbnail>({
     default: true,
   },
 }, { timestamps: true });
+
+// In development, delete the cached model so hot-reload always picks up
+// the latest schema (fixes stale enum validation errors after schema changes)
+if (process.env.NODE_ENV === 'development' && mongoose.models.Thumbnail) {
+  delete (mongoose.models as Record<string, unknown>).Thumbnail;
+}
 
 const Thumbnail =
   mongoose.models.Thumbnail ||
