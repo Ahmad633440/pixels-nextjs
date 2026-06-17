@@ -2,6 +2,7 @@
 import { CheckIcon, ChevronRightIcon, EyeIcon, VideoIcon } from "lucide-react";
 import TiltedImage from "@/components/TiltImage";
 import { motion } from "motion/react";
+import Link from "next/link";
 
 export default function HeroSection() {
     const specialFeatures = [
@@ -49,13 +50,17 @@ export default function HeroSection() {
                 viewport={{ once: true }}
                 transition={{ type: "spring", stiffness: 320, damping: 70, mass: 1 }}
             >
-                <button className="bg-pink-600 hover:bg-pink-700 text-white rounded-full px-7 h-11" >
-                    Generate now
-                </button>
-                <button className="flex items-center gap-2 border border-pink-900 hover:bg-pink-950/50 transition rounded-full px-6 h-11">
-                    <EyeIcon strokeWidth={1} />
-                    <span>View Creations</span>
-                </button>
+                <Link href="/generate">
+                    <button className="bg-pink-600 hover:bg-pink-700 text-white rounded-full px-7 h-11" >
+                        Generate now
+                    </button>
+                </Link>
+                <Link href="/myGenerationPage">
+                    <button className="flex items-center gap-2 border border-pink-900 hover:bg-pink-950/50 transition rounded-full px-6 h-11">
+                        <EyeIcon strokeWidth={1} />
+                        <span>View Creations</span>
+                    </button>
+                </Link>
             </motion.div>
 
             <div className="flex flex-wrap justify-center items-center gap-4 md:gap-14 mt-12">
