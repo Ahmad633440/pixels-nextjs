@@ -15,5 +15,5 @@ export const navlinks: INavLink[] = [
       ]
      },
     { name: "Library", href: "/myGenerationPage" },
-    { name: "About", href: "#pricing" },
+    { name: "About", href: "/about" },
 ];

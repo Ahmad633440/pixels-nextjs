@@ -77,53 +77,99 @@ const page = () => {
 
      {/* THUMBNAILS GRID */}
      {!loading && thumbnails.length > 0 && (
-       <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6'>
-         {thumbnails.map((thumbnail) => (
-           <div key={thumbnail.id} className='group relative rounded-2xl bg-white/8 border border-white/12 overflow-hidden hover:border-white/20 transition-colors'>
-             <div className='aspect-video relative bg-black/20'>
-               {thumbnail.image_url ? (
-                 <img
-                   src={thumbnail.image_url}
-                   alt={thumbnail.title}
-                   className='w-full h-full object-cover'
-                 />
-               ) : (
-                 <div className='w-full h-full flex items-center justify-center text-zinc-500'>
-                   <span className='text-sm'>Image unavailable</span>
+       <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-4 gap-y-10'>
+         {thumbnails.map((thumbnail, index) => {
+           // Generate a mock duration (e.g. 10:42, 5:18, etc.)
+           const durationMinutes = Math.floor((index * 3 + 4) % 15) + 3;
+           const durationSeconds = Math.floor((index * 17) % 60).toString().padStart(2, '0');
+           const fakeDuration = `${durationMinutes}:${durationSeconds}`;
+           
+           // Mock dynamic views
+           const viewsArray = ['12K', '85K', '254K', '1.2M', '45K', '320K', '9.8K', '62K'];
+           const fakeViews = viewsArray[index % viewsArray.length];
+           
+           // Mock dynamic upload time
+           const timesArray = ['2 hours ago', '1 day ago', '3 days ago', '1 week ago', '2 weeks ago'];
+           const fakeTime = timesArray[index % timesArray.length];
+
+           // Mock channel name
+           const channelName = 'Creator Studio';
+           
+           // Unique avatar color based on index
+           const avatarColors = ['bg-pink-600', 'bg-blue-600', 'bg-purple-600', 'bg-indigo-600', 'bg-violet-600'];
+           const avatarColor = avatarColors[index % avatarColors.length];
+
+           return (
+             <div key={thumbnail.id} className='flex flex-col gap-3 group relative'>
+               {/* THUMBNAIL CONTAINER */}
+               <div className='aspect-video relative rounded-xl overflow-hidden bg-zinc-800/50 border border-white/5 group-hover:border-white/15 transition-all shadow-md'>
+                 {thumbnail.image_url ? (
+                   <img
+                     src={thumbnail.image_url}
+                     alt={thumbnail.title}
+                     className='w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-300'
+                   />
+                 ) : (
+                   <div className='w-full h-full flex items-center justify-center text-zinc-500'>
+                     <span className='text-sm'>Image unavailable</span>
+                   </div>
+                 )}
+                 
+                 {/* FAKE VIDEO DURATION */}
+                 <span className='absolute bottom-2 right-2 bg-black/85 px-1.5 py-0.5 text-[11px] text-white rounded font-medium tracking-wide'>
+                   {fakeDuration}
+                 </span>
+
+                 {/* HOVER ACTIONS OVERLAY */}
+                 <div className='absolute inset-0 bg-black/40 backdrop-blur-xs flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200'>
+                   <div className='flex gap-3 scale-90 group-hover:scale-100 transition-transform duration-200'>
+                     <button
+                       onClick={() => handleDownload(thumbnail.image_url)}
+                       className='p-2.5 bg-white text-zinc-900 hover:bg-zinc-100 active:scale-95 rounded-full shadow-lg transition-all cursor-pointer'
+                       title='Download Thumbnail'
+                     >
+                       <svg className='w-5 h-5' fill='none' stroke='currentColor' strokeWidth={2.5} viewBox='0 0 24 24'>
+                         <path strokeLinecap='round' strokeLinejoin='round' d='M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z' />
+                       </svg>
+                     </button>
+                     <button
+                       onClick={() => handleDelete(thumbnail.id)}
+                       className='p-2.5 bg-red-600 hover:bg-red-500 text-white active:scale-95 rounded-full shadow-lg transition-all cursor-pointer'
+                       title='Delete Thumbnail'
+                     >
+                       <svg className='w-5 h-5' fill='none' stroke='currentColor' strokeWidth={2.5} viewBox='0 0 24 24'>
+                         <path strokeLinecap='round' strokeLinejoin='round' d='M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16' />
+                       </svg>
+                     </button>
+                   </div>
                  </div>
-               )}
-               <div className='absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100'>
-                 <div className='flex gap-2'>
-                   <button
-                     onClick={() => handleDownload(thumbnail.image_url)}
-                     className='p-2 bg-white/20 hover:bg-white/30 rounded-full text-white transition-colors'
-                     title='Download'
-                   >
-                     <svg className='w-5 h-5' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
-                       <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z' />
-                     </svg>
-                   </button>
-                   <button
-                     onClick={() => handleDelete(thumbnail.id)}
-                     className='p-2 bg-red-500/20 hover:bg-red-500/30 rounded-full text-white transition-colors'
-                     title='Delete'
-                   >
-                     <svg className='w-5 h-5' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
-                       <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16' />
-                     </svg>
-                   </button>
+               </div>
+
+               {/* YOUTUBE STYLE META SECTION */}
+               <div className='flex gap-3 px-1'>
+                 {/* Channel Avatar Mock */}
+                 <div className={`size-9 rounded-full ${avatarColor} flex items-center justify-center font-bold text-xs text-white shrink-0 shadow-inner select-none`}>
+                   {thumbnail.title.charAt(0).toUpperCase() || 'C'}
+                 </div>
+                 {/* Title and stats */}
+                 <div className='flex flex-col min-w-0 flex-1'>
+                   <h3 className='text-[14px] font-semibold text-zinc-100 line-clamp-2 leading-[20px] mb-0.5 group-hover:text-pink-500 transition-colors' title={thumbnail.title}>
+                     {thumbnail.title}
+                   </h3>
+                   <div className='flex flex-col text-[12px] text-zinc-400 leading-4'>
+                     <span className='hover:text-zinc-200 transition-colors cursor-pointer'>{channelName}</span>
+                     <span>{fakeViews} views • {fakeTime}</span>
+                   </div>
+                   {/* Style and Ratio badges */}
+                   <div className='flex gap-2 mt-2'>
+                     <span className='px-2 py-0.5 text-[10px] font-medium bg-zinc-800/80 text-zinc-300 rounded border border-zinc-700/30'>{thumbnail.style}</span>
+                     <span className='px-2 py-0.5 text-[10px] font-medium bg-zinc-800/80 text-zinc-300 rounded border border-zinc-700/30'>{thumbnail.aspect_ratio}</span>
+                   </div>
                  </div>
                </div>
              </div>
-             <div className='p-4'>
-               <h3 className='font-medium text-zinc-200 truncate'>{thumbnail.title}</h3>
-               <div className='flex items-center justify-between mt-2 text-xs text-zinc-400'>
-                 <span>{thumbnail.style}</span>
-                 <span>{thumbnail.aspect_ratio}</span>
-               </div>
-             </div>
-           </div>
-         ))}
+           );
+         })}
        </div>
      )}
 

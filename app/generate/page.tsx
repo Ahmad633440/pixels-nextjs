@@ -47,7 +47,8 @@ const Generate = () => {
         }
         setGeneratedThumbnail(thumbnailData);
       } else {
-        alert(result.message || 'Failed to generate thumbnail');
+        // alert(result.message || 'Failed to generate thumbnail');
+        console.log('Thumbanail Error:', result.message);
       }
     } catch (error) {
       console.error(error);
@@ -104,7 +105,7 @@ const Generate = () => {
                   className='input-primary'
                   onChange={(e) => setTitle(e.target.value)}
                   maxLength={100}
-                  placeholder='e.g., 10 JavaScript Tips You Must Know'
+                  placeholder='Enter your Title here'
                 />
                 <div className='flex justify-end'>
                   <span className='text-xs text-zinc-500'>{title.length}/100</span>
