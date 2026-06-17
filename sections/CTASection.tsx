@@ -1,5 +1,6 @@
 'use client'
 import { motion } from "motion/react";
+import Link from "next/link";
 
 export default function CTASection() {
     return (
@@ -27,14 +28,16 @@ export default function CTASection() {
                     Join thousands of creators using AI to boost their CTR.
                 </motion.p>
             </div>
-            <motion.button className="px-12 py-3 text-slate-800 bg-white hover:bg-slate-200 rounded-full text-sm mt-4"
-                initial={{ y: 80, opacity: 0 }}
-                whileInView={{ y: 0, opacity: 1 }}
-                viewport={{ once: true }}
-                transition={{ type: "spring", stiffness: 280, damping: 70, mass: 1 }}
-            >
-                Get Started
-            </motion.button>
+            <Link href="/generate">
+                <motion.button className="px-12 py-3 text-slate-800 bg-white hover:bg-slate-200 rounded-full text-sm mt-4"
+                    initial={{ y: 80, opacity: 0 }}
+                    whileInView={{ y: 0, opacity: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ type: "spring", stiffness: 280, damping: 70, mass: 1 }}
+                >
+                    Get Started
+                </motion.button>
+            </Link>
         </motion.div>
     );
 }
