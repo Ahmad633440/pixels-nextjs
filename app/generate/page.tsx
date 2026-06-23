@@ -48,6 +48,7 @@ const Generate = () => {
         setGeneratedThumbnail(thumbnailData);
       } else {
         alert(result.message || 'Failed to generate thumbnail');
+        console.error('Generation error:', result.message);
       }
     } catch (error) {
       console.error(error);
