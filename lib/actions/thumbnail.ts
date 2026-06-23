@@ -2,7 +2,8 @@
 
 import connectDB from "@/lib/config/db";
 import Thumbnail from "@/models/Thumbnail";
-import { generateHuggingFaceImage, generateHuggingFaceImageFromImage } from '@/lib/config/ai';
+import ai from '@/lib/config/ai';
+import { GenerateContentConfig, HarmBlockThreshold, HarmCategory } from '@google/genai';
 
 interface ThumbnailRequestBody {
     title: string;
@@ -52,33 +53,69 @@ export async function generateThumbnailAction(data: ThumbnailRequestBody) {
             isGenerating: true
         });
 
-        let prompt = `Create a ${stylePrompts[style as keyof typeof stylePrompts]} for: ${title}`;
+        const model = 'gemini-3-pro-image-preview';
 
-        if (color_scheme) {
-            prompt += ` Use a ${ColorSchemeDescription[color_scheme as keyof typeof ColorSchemeDescription]} color scheme.`;
+        const generationConfig: GenerateContentConfig = {
+            maxOutputTokens: 32768,
+            temperature: 1,
+            topP: 0.95,
+            responseModalities: ['IMAGE'],
+            imageConfig: {
+                aspectRatio: aspect_ratio || '16:9'
+            },
+            safetySettings: [
+                {category: HarmCategory.HARM_CATEGORY_HATE_SPEECH, threshold: HarmBlockThreshold.OFF},
+                {category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT, threshold: HarmBlockThreshold.OFF},
+                {category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT, threshold: HarmBlockThreshold.OFF},
+                {category: HarmCategory.HARM_CATEGORY_HARASSMENT, threshold: HarmBlockThreshold.OFF},
+            ]
         }
 
-        if (user_prompt) {
-            prompt += ` Additional details: ${user_prompt}.`;
+        let prompt = `Create a ${stylePrompts[style as keyof typeof stylePrompts]} for: ${title}`; 
+
+        if(color_scheme){
+            prompt += ` Use a ${ColorSchemeDescription[color_scheme as keyof typeof ColorSchemeDescription ]} color scheme.`
         }
 
-        prompt += ` The thumbnail should be ${aspect_ratio}, visually stunning, and designed to maximize click-through rate. Make it bold, professional, and impossible to ignore.`;
-
-        const generatedImage = await generateHuggingFaceImage(prompt, aspect_ratio);
-
-        if (!generatedImage?.base64) {
-            throw new Error('No image data returned from Hugging Face');
+        if(user_prompt){
+            prompt += ` Additional details: ${user_prompt}.`
         }
 
-        const finalBase64 = generatedImage.base64;
-        const mimeType = generatedImage.mimeType || 'image/png';
+        prompt += ` The thumbnail should be ${aspect_ratio}, visually stunning, and designed to maximize click-through rate. Make it bold, professional, and impossible to ignore.` 
+        
+        // GENERATING IMAGE USING AI MODEL
+        const response: any = await ai.models.generateContent({
+            model, 
+            contents: [prompt],
+            config: generationConfig
+        })
 
+        // Check if the response is valid
+        if(!response?.candidates?.[0]?.content?.parts){
+            throw new Error('No image generated');
+        } 
+
+        const parts = response.candidates[0].content.parts;
+        let finalBase64: string | null = null;
+
+        for(const part of parts){
+            if(part.inlineData){
+                finalBase64 = part.inlineData.data;
+            }
+        }
+
+        if (!finalBase64) {
+             throw new Error('No image data found in response');
+        }
+
+        // In a real app, you'd upload this to Cloudinary/S3 and save the URL
+        // For now, we'll just update the model with a placeholder or the base64 (if small)
+        // But usually we return the base64 or a success message.
+        
         // Updating the thumbnail in DB
-        thumbnail.image_url = `data:${mimeType};base64,${finalBase64}`;
-        thumbnail.prompt_used = prompt;
+        thumbnail.image_url = `data:image/png;base64,${finalBase64}`;
         thumbnail.isGenerating = false;
         await thumbnail.save();
-
 
         return {
             success: true,
@@ -94,22 +131,37 @@ export async function generateThumbnailAction(data: ThumbnailRequestBody) {
     }
 }
 
-async function getImageDataUrl(imageInput: string) {
+async function getImagePart(imageInput: string) {
     if (imageInput.startsWith('data:')) {
-        return imageInput;
-    }
-
-    try {
-        const response = await fetch(imageInput);
-        if (!response.ok) {
-            throw new Error(`Failed to fetch image from URL: ${response.statusText}`);
+        const matches = imageInput.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
+        if (!matches || matches.length !== 3) {
+            throw new Error('Invalid base64 image data');
         }
-        const buffer = await response.arrayBuffer();
-        const contentType = response.headers.get('content-type') || 'image/png';
-        const base64Data = Buffer.from(buffer).toString('base64');
-        return `data:${contentType};base64,${base64Data}`;
-    } catch (e: any) {
-        throw new Error(`Error fetching image from URL: ${e.message}`);
+        return {
+            inlineData: {
+                mimeType: matches[1],
+                data: matches[2]
+            }
+        };
+    } else {
+        // Assume it's a URL
+        try {
+            const response = await fetch(imageInput);
+            if (!response.ok) {
+                throw new Error(`Failed to fetch image from URL: ${response.statusText}`);
+            }
+            const buffer = await response.arrayBuffer();
+            const contentType = response.headers.get('content-type') || 'image/png';
+            const base64Data = Buffer.from(buffer).toString('base64');
+            return {
+                inlineData: {
+                    mimeType: contentType,
+                    data: base64Data
+                }
+            };
+        } catch (e: any) {
+            throw new Error(`Error fetching image from URL: ${e.message}`);
+        }
     }
 }
 
@@ -137,27 +189,58 @@ export async function recreateThumbnailAction(data: {
             isGenerating: true
         });
 
-        const imageDataUrl = await getImageDataUrl(imageInput);
+        const imagePart = await getImagePart(imageInput);
+        const model = 'gemini-3-pro-image-preview';
+
+        const generationConfig: GenerateContentConfig = {
+            maxOutputTokens: 32768,
+            temperature: 1,
+            topP: 0.95,
+            responseModalities: ['IMAGE'],
+            imageConfig: {
+                aspectRatio: aspect_ratio || '16:9'
+            },
+            safetySettings: [
+                {category: HarmCategory.HARM_CATEGORY_HATE_SPEECH, threshold: HarmBlockThreshold.OFF},
+                {category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT, threshold: HarmBlockThreshold.OFF},
+                {category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT, threshold: HarmBlockThreshold.OFF},
+                {category: HarmCategory.HARM_CATEGORY_HARASSMENT, threshold: HarmBlockThreshold.OFF},
+            ]
+        };
 
         const systemPrompt = `You are an AI thumbnail copy maker. Below is an input image. Please recreate it as a new high-quality, professional, and visually stunning thumbnail with the following requested changes:
 "${user_prompt || 'Enhance the original thumbnail to be more click-worthy and professional.'}"
 Make the recreated thumbnail in ${aspect_ratio} aspect ratio, clear, engaging, and impossible to ignore.`;
 
-        const generatedImage = await generateHuggingFaceImageFromImage(imageDataUrl, systemPrompt, aspect_ratio);
+        // GENERATING IMAGE USING MULTIMODAL AI MODEL
+        const response: any = await ai.models.generateContent({
+            model, 
+            contents: [imagePart, systemPrompt],
+            config: generationConfig
+        });
 
-        if (!generatedImage?.base64) {
-            throw new Error('No image data returned from Hugging Face');
+        // Check if the response is valid
+        if(!response?.candidates?.[0]?.content?.parts){
+            throw new Error('No image generated');
+        } 
+
+        const parts = response.candidates[0].content.parts;
+        let finalBase64: string | null = null;
+
+        for(const part of parts){
+            if(part.inlineData){
+                finalBase64 = part.inlineData.data;
+            }
         }
 
-        const finalBase64 = generatedImage.base64;
-        const mimeType = generatedImage.mimeType || 'image/png';
+        if (!finalBase64) {
+             throw new Error('No image data found in response');
+        }
 
         // Updating the thumbnail in DB
-        thumbnail.image_url = `data:${mimeType};base64,${finalBase64}`;
-        thumbnail.prompt_used = systemPrompt;
+        thumbnail.image_url = `data:image/png;base64,${finalBase64}`;
         thumbnail.isGenerating = false;
         await thumbnail.save();
-
 
         return {
             success: true,

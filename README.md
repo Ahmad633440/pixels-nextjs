@@ -7,12 +7,12 @@ Users can upload an image or provide a URL, customize styles, and generate impro
 
 ## 🚀 Features
 
-- Generate thumbnails using AI
-- Multiple styles (Minimalist, Bold, Photorealistic, etc.)
-- Aspect ratio selection (1:1, 16:9, 9:16)
-- Color scheme customization
-- Real-time preview (planned)
-- Store and manage generated thumbnails
+* Generate thumbnails using AI
+* Multiple styles (Minimalist, Bold, Photorealistic, etc.)
+* Aspect ratio selection (1:1, 16:9, 9:16)
+* Color scheme customization
+* Real-time preview (planned)
+* Store and manage generated thumbnails
 
 ---
 
@@ -20,19 +20,19 @@ Users can upload an image or provide a URL, customize styles, and generate impro
 
 ### Frontend
 
-- Next.js
-- React
-- Tailwind CSS
+* Next.js
+* React
+* Tailwind CSS
 
 ### Backend
 
-- Node.js
-- Express
-- MongoDB (Mongoose)
+* Node.js
+* Express
+* MongoDB (Mongoose)
 
 ### AI Integration
 
-- Hugging Face API (FLUX.1-schnell) for image generation
+* Google Gemini API *(or alternative like Hugging Face)*
 
 ---
 
@@ -96,8 +96,7 @@ Create `.env` file inside `server/`
 ```
 PORT=5000
 MONGODB_URI=your_mongodb_connection
-HUGGINGFACE_API_KEY=your_api_key
-HUGGINGFACE_MODEL=FLUX.1-schnell
+GEMINI_API_KEY=your_api_key
 ```
 
 ---
@@ -116,9 +115,9 @@ Make sure CORS is enabled on the server.
 
 ## 📌 Current Status
 
-- Frontend UI in progress
-- Backend setup completed
-- AI integration in progress
+* Frontend UI in progress
+* Backend setup completed
+* AI integration in progress
 
 ---
 
@@ -130,8 +129,8 @@ Build a practical, production-ready AI tool for thumbnail generation that can be
 
 ## ⚠️ Notes
 
-- Free AI APIs may have usage limits
-- Some features may require paid API access
+* Free AI APIs may have usage limits
+* Some features may require paid API access
 
 ---
 
