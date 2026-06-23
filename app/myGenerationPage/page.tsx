@@ -34,7 +34,39 @@ const page = () => {
   }
 
   const handleDownload = async (imageUrl: string) => {
-    window.open(imageUrl, '_blank')
+    if (!imageUrl) return
+
+    try {
+      const fileName = 'thumbnail'
+
+      if (imageUrl.startsWith('data:')) {
+        const link = document.createElement('a')
+        link.href = imageUrl
+        link.download = `${fileName}.png`
+        document.body.appendChild(link)
+        link.click()
+        link.remove()
+        return
+      }
+
+      const response = await fetch(imageUrl)
+      if (!response.ok) throw new Error('Failed to download image')
+
+      const blob = await response.blob()
+      const extension = blob.type?.split('/')[1] || 'png'
+      const objectUrl = URL.createObjectURL(blob)
+
+      const link = document.createElement('a')
+      link.href = objectUrl
+      link.download = `${fileName}.${extension}`
+      document.body.appendChild(link)
+      link.click()
+      link.remove()
+      URL.revokeObjectURL(objectUrl)
+    } catch (error) {
+      console.error('Download failed:', error)
+      alert('Download failed. Please try again.')
+    }
   }
 
   const handleDelete = async (id: string) => {

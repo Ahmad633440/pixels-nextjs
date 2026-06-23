@@ -12,9 +12,41 @@ const aspectClasses: Record<AspectRatio, string> = {
 }
 
 // download button for downloading generated thumbnail
-const onDownload = ()=>{
-  if(!thumbnail?.image_url) return
-  window.open(thumbnail.image_url, '_blank') 
+const onDownload = async () => {
+  if (!thumbnail?.image_url) return
+
+  try {
+    const fileName = `${thumbnail.title?.trim().replace(/[^a-zA-Z0-9-_\.]/g, '_') || 'thumbnail'}`
+    const imageUrl = thumbnail.image_url
+
+    if (imageUrl.startsWith('data:')) {
+      const link = document.createElement('a')
+      link.href = imageUrl
+      link.download = `${fileName}.png`
+      document.body.appendChild(link)
+      link.click()
+      link.remove()
+      return
+    }
+
+    const response = await fetch(imageUrl)
+    if (!response.ok) throw new Error('Failed to download image')
+
+    const blob = await response.blob()
+    const extension = blob.type?.split('/')[1] || 'png'
+    const objectUrl = URL.createObjectURL(blob)
+
+    const link = document.createElement('a')
+    link.href = objectUrl
+    link.download = `${fileName}.${extension}`
+    document.body.appendChild(link)
+    link.click()
+    link.remove()
+    URL.revokeObjectURL(objectUrl)
+  } catch (error) {
+    console.error('Download failed:', error)
+    alert('Download failed. Please try again.')
+  }
 }
 
   return (
